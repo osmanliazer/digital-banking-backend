@@ -1,8 +1,10 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+build/
+.gradle/
+
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 ### STS ###
 .apt_generated
@@ -14,10 +16,9 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
+.idea/
 *.iml
-*.ipr
+out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -25,14 +26,18 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
-# Spring Boot config
-src/main/resources/application.properties
+### Logs ###
+*.log
 
+### OS Files ###
+.DS_Store
+Thumbs.db
 
+### Env / Secrets ###
+.env
+application.properties
+application.yml
