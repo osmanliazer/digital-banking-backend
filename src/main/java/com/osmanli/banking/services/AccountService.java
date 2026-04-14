@@ -1,9 +1,11 @@
 package com.osmanli.banking.services;
 
+import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.User;
 import com.osmanli.banking.repository.AccountRepository;
 import com.osmanli.banking.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -97,4 +99,32 @@ public class AccountService {
 
         accountRepository.delete(account);
     }
+
+    @Transactional
+    public void transfer(TransferRequest request) {
+        if(request.getAmount()<=0){
+            throw new RuntimeException ("Amount must be greater than 0");
+        }
+
+        Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccount())
+                .orElseThrow(()-> new RuntimeException("Account not found"));
+
+        Account toAccount= accountRepository.findByAccountNumber(request.getToAccount())
+                .orElseThrow(()->new RuntimeException("Account not found"));
+
+        if(fromAccount.getBalance()<=request.getAmount()){
+            throw new RuntimeException ("Insufficient balance");
+        }
+        /*if(toAccount.getBalance()<=request.getAmount()){
+            throw new RuntimeException ("Insufficient balance");
+        }*/
+
+        fromAccount.setBalance(fromAccount.getBalance()- request.getAmount());
+        toAccount.setBalance(toAccount.getBalance()+request.getAmount());
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+    }
+
+
 }

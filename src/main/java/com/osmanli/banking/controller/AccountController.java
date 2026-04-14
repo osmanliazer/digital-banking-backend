@@ -1,5 +1,6 @@
 package com.osmanli.banking.controller;
 
+import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.services.AccountService;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,12 @@ public class AccountController {
     @PostMapping("/user/{userId}")
     public Account createAccount(@RequestBody Account account, @PathVariable Long userId) {
         return service.createAccount(account, userId);
+    }
+
+    @PostMapping("/transfer")
+    public String transfer(@RequestBody TransferRequest request){
+        service.transfer(request);
+        return "success";
     }
 
     @GetMapping("/{Id}")
@@ -45,4 +52,6 @@ public class AccountController {
         service.delete(id);
         return "Account deleted successfully";
         }
+
+
 }
