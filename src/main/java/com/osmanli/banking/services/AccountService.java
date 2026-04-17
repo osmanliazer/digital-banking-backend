@@ -162,5 +162,11 @@ public class AccountService {
         transactionRepository.save(transaction);
     }
 
+    public List<Transaction>getAccountTransactions(Long accountId) {
+        Account account=accountRepository.findById(accountId)
+                .orElseThrow(()->new RuntimeException("Account not found"));
+
+        return transactionRepository.findByFromAccountOrToAccount(account, account);
+    }
 
 }

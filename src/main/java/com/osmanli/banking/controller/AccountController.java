@@ -2,6 +2,7 @@ package com.osmanli.banking.controller;
 
 import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
+import com.osmanli.banking.entity.Transaction;
 import com.osmanli.banking.services.AccountService;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,4 +55,8 @@ public class AccountController {
         }
 
 
+        @GetMapping("/{id}/transactions")
+    public List<Transaction> getTransactions(@PathVariable Long id){
+        return service.getAccountTransactions(id);
+    }
 }
