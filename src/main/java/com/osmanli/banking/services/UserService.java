@@ -1,5 +1,6 @@
 package com.osmanli.banking.services;
 
+import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.UserRepository;
 import com.osmanli.banking.entity.User;
 
@@ -41,7 +42,7 @@ public class UserService {
 
     public User getById(long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
     }
 
     public List<User> getAll() {
@@ -51,7 +52,7 @@ public class UserService {
     public User update(Long id, User updatedUser) {
 
         User existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
 
         if (updatedUser.getName() != null) {
             existing.setName(updatedUser.getName());
@@ -76,7 +77,7 @@ public class UserService {
 
     public void delete(Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
         repository.delete(user);
 
     }

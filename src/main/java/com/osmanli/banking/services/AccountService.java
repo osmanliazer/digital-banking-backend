@@ -4,6 +4,9 @@ import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.Transaction;
 import com.osmanli.banking.entity.User;
+import com.osmanli.banking.exception.AccountNotFound;
+import com.osmanli.banking.exception.InsufficientBalance;
+import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.AccountRepository;
 import com.osmanli.banking.repository.UserRepository;
 
@@ -42,7 +45,7 @@ public class AccountService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
 
         account.setAccountNumber(generateAccountNumber());
         account.setUser(user);
@@ -63,7 +66,7 @@ public class AccountService {
 
     public Account getById(Long id) {
         return accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFound("Account not found"));
     }
 
     public List<Account> getAll() {
@@ -72,7 +75,7 @@ public class AccountService {
 
     public Account deposit(Long id, double amount) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFound("Account not found"));
 
         if (amount <= 0) {
             throw new RuntimeException("Deposit amount must be greater than 0");
@@ -96,14 +99,14 @@ public class AccountService {
 
     public Account withdraw(Long id, double amount) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFound("Account not found"));
 
         if (amount <= 0) {
             throw new RuntimeException("Withdraw amount must be greater than 0");
         }
 
         if (account.getBalance() < amount) {
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalance("Insufficient balance");
         }
 
         account.setBalance(account.getBalance() - amount);
@@ -121,7 +124,7 @@ public class AccountService {
 
     public void delete(Long id) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFound("Account not found"));
 
         accountRepository.delete(account);
     }
@@ -133,13 +136,13 @@ public class AccountService {
         }
 
         Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccount())
-                .orElseThrow(()-> new RuntimeException("Account not found"));
+                .orElseThrow(()-> new AccountNotFound("Account not found"));
 
         Account toAccount= accountRepository.findByAccountNumber(request.getToAccount())
-                .orElseThrow(()->new RuntimeException("Account not found"));
+                .orElseThrow(()->new AccountNotFound("Account not found"));
 
         if(fromAccount.getBalance()<=request.getAmount()){
-            throw new RuntimeException ("Insufficient balance");
+            throw new InsufficientBalance("Insufficient balance");
         }
         /*if(toAccount.getBalance()<=request.getAmount()){
             throw new RuntimeException ("Insufficient balance");
@@ -164,7 +167,7 @@ public class AccountService {
 
     public List<Transaction>getAccountTransactions(Long accountId) {
         Account account=accountRepository.findById(accountId)
-                .orElseThrow(()->new RuntimeException("Account not found"));
+                .orElseThrow(()->new AccountNotFound("Account not found"));
 
         return transactionRepository.findByFromAccountOrToAccount(account, account);
     }
