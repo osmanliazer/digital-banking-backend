@@ -35,4 +35,4 @@ Swagger UI:
 - JWT Authentication
 - Role-based authorization
 - Docker support
-- Better exception handling
+
