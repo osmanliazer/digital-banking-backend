@@ -2,12 +2,15 @@ package com.osmanli.banking.services;
 
 import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
+import com.osmanli.banking.entity.Transaction;
 import com.osmanli.banking.entity.User;
 import com.osmanli.banking.repository.AccountRepository;
 import com.osmanli.banking.repository.UserRepository;
+
+import com.osmanli.banking.repository.TransactionRepository;
+import java.time.LocalDateTime;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -15,10 +18,12 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    public AccountService(AccountRepository accountRepository, UserRepository userRepository) {
+    public AccountService(AccountRepository accountRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public Account createAccount(Account account, Long userId) {
@@ -74,7 +79,19 @@ public class AccountService {
         }
 
         account.setBalance(account.getBalance() + amount);
-        return accountRepository.save(account);
+        Account savedAccount= accountRepository.save(account);
+
+        Transaction transaction=Transaction.builder()
+                .type("DEPOSIT")
+                .amount(amount)
+                .createdAt(LocalDateTime.now())
+                .toAccount(savedAccount)
+                .build();
+
+        transactionRepository.save(transaction);
+        return savedAccount;
+
+
     }
 
     public Account withdraw(Long id, double amount) {
@@ -90,7 +107,16 @@ public class AccountService {
         }
 
         account.setBalance(account.getBalance() - amount);
-        return accountRepository.save(account);
+        Account savedAccount= accountRepository.save(account);
+
+        Transaction transaction=Transaction.builder()
+                .type("WITHDRAW")
+                .amount(amount)
+                .createdAt(LocalDateTime.now())
+                .fromAccount(savedAccount)
+                .build();
+        transactionRepository.save(transaction);
+        return savedAccount;
     }
 
     public void delete(Long id) {
@@ -124,6 +150,16 @@ public class AccountService {
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
+
+        Transaction transaction=Transaction.builder()
+                .type("TRANSFER")
+                .amount(request.getAmount())
+                .createdAt(LocalDateTime.now())
+                .toAccount(toAccount)
+                .fromAccount(fromAccount)
+                .build();
+
+        transactionRepository.save(transaction);
     }
 
 
