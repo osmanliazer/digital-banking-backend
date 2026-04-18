@@ -2,6 +2,8 @@ package com.osmanli.banking.exception;
 
 import com.osmanli.banking.entity.Account;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -55,6 +57,22 @@ public class GlobalExceptionHandler {
         error.put("status", 400);
         error.put("error", "Bad Request");
         error.put("error", ex.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", 400);
+
+        Map<String, String> validationErrors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors()
+                .forEach(err -> validationErrors.put(err.getField(), err.getDefaultMessage()));
+
+        error.put("errors", validationErrors);
         return error;
     }
 

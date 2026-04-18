@@ -1,6 +1,7 @@
 package com.osmanli.banking.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 @Entity
@@ -20,6 +21,7 @@ public class Account {
     private String accountNumber;
 
     @Column(nullable = false)
+    @PositiveOrZero(message="balance must not be negative")
     private double balance;
 
     @ManyToOne

@@ -3,6 +3,7 @@ package com.osmanli.banking.controller;
 import com.osmanli.banking.dto.UserResponse;
 import com.osmanli.banking.entity.User;
 import com.osmanli.banking.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponse register(@RequestBody User user) {
+    public UserResponse register(@Valid @RequestBody User user) {
         return service.register(user);
     }
 
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserResponse update(@PathVariable long id, @RequestBody User updatedUser) {
+    public UserResponse update(@PathVariable long id, @Valid @RequestBody User updatedUser) {
         return service.update(id, updatedUser);
     }
 

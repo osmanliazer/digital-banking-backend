@@ -6,6 +6,7 @@ import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.Transaction;
 import com.osmanli.banking.services.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class AccountController {
     }
 
     @PostMapping("/user/{userId}")
-    public AccountResponse createAccount(@RequestBody Account account, @PathVariable Long userId) {
+    public AccountResponse createAccount(@RequestBody Account account,@Valid @PathVariable Long userId) {
         return service.createAccount(account, userId);
     }
 
