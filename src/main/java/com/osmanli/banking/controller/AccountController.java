@@ -1,6 +1,7 @@
 package com.osmanli.banking.controller;
 
 import com.osmanli.banking.dto.AccountResponse;
+import com.osmanli.banking.dto.TransactionResponse;
 import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.Transaction;
@@ -57,7 +58,7 @@ public class AccountController {
 
 
         @GetMapping("/{id}/transactions")
-    public List<Transaction> getTransactions(@PathVariable Long id){
+    public List<TransactionResponse> getTransactions(@PathVariable Long id){
         return service.getAccountTransactions(id);
     }
 }

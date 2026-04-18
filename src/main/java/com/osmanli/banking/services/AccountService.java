@@ -75,6 +75,17 @@ public class AccountService {
                 .stream()
                 .map(this::mapToAccountResponse)
                 .toList();
+    }
+
+
+
+    public List<TransactionResponse> getAccountTransactions(Long accountId) {
+        Account account=accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFound("Account not found"));
+        return transactionRepository.findByFromAccountOrToAccount(account, account)
+                .stream()
+                .map(this::mapToTransactionResponse)
+                .toList();
 
     }
 
@@ -170,12 +181,6 @@ public class AccountService {
         transactionRepository.save(transaction);
     }
 
-    public List<Transaction>getAccountTransactions(Long accountId) {
-        Account account=accountRepository.findById(accountId)
-                .orElseThrow(()->new AccountNotFound("Account not found"));
-
-        return transactionRepository.findByFromAccountOrToAccount(account, account);
-    }
 
     private AccountResponse mapToAccountResponse(Account account){
         return AccountResponse.builder()
@@ -186,5 +191,17 @@ public class AccountService {
                 .userName(account.getUser().getName())
                 .build();
     }
+
+    private TransactionResponse mapToTransactionResponse(Transaction transaction){
+        return TransactionResponse.builder()
+                .id(transaction.getId())
+                .type(transaction.getType())
+                .amount(transaction.getAmount())
+                .fromAccountNumber(transaction.getFromAccount()!=null? transaction.getFromAccount().getAccountNumber():null)
+                .toAccountNumber(transaction.getToAccount()!=null? transaction.getToAccount().getAccountNumber():null)
+                .createdAt(transaction.getCreatedAt())
+                .build();
+    }
+
 
 }
