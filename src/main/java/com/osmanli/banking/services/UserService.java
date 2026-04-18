@@ -1,5 +1,6 @@
 package com.osmanli.banking.services;
 
+import com.osmanli.banking.dto.UserResponse;
 import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.UserRepository;
 import com.osmanli.banking.entity.User;
@@ -20,7 +21,7 @@ public class UserService {
     }
 
 
-    public User register(User user) {
+    public UserResponse register(User user) {
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new RuntimeException("Email must not be empty");
@@ -37,19 +38,26 @@ public class UserService {
         if (user.getPassword() == null || user.getPassword().length() < 6) {
             throw new RuntimeException("Password must be at least 6 characters");
         }
-        return repository.save(user);
+        User savedUser= repository.save(user);
+        return mapToUserResponse(savedUser);
     }
 
-    public User getById(long id) {
-        return repository.findById(id)
+    public UserResponse getById(long id) {
+        User user=repository.findById(id)
                 .orElseThrow(() -> new UserNotFound("User not found"));
+        return mapToUserResponse(user);
     }
 
-    public List<User> getAll() {
-        return repository.findAll();
+    public List<UserResponse> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(this::mapToUserResponse)
+                .toList();
+
+
     }
 
-    public User update(Long id, User updatedUser) {
+    public UserResponse update(Long id, User updatedUser) {
 
         User existing = repository.findById(id)
                 .orElseThrow(() -> new UserNotFound("User not found"));
@@ -71,7 +79,8 @@ public class UserService {
             existing.setEmail(updatedUser.getEmail());
         }
 
-        return repository.save(existing);
+        User savedUser= repository.save(existing);
+        return mapToUserResponse(savedUser);
 
     }
 
@@ -80,6 +89,14 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFound("User not found"));
         repository.delete(user);
 
+    }
+
+    private UserResponse mapToUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
 }

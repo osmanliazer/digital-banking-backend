@@ -1,5 +1,6 @@
 package com.osmanli.banking.controller;
 
+import com.osmanli.banking.dto.UserResponse;
 import com.osmanli.banking.entity.User;
 import com.osmanli.banking.services.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -17,22 +18,22 @@ public class UserController {
     }
 
     @PostMapping
-    public User register(@RequestBody User user) {
+    public UserResponse register(@RequestBody User user) {
         return service.register(user);
     }
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable long id) {
+    public UserResponse getById(@PathVariable long id) {
         return service.getById(id);
     }
 
     @GetMapping
-    public List<User> getAll() {
+    public List<UserResponse> getAll() {
         return service.getAll();
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable long id, @RequestBody User updatedUser) {
+    public UserResponse update(@PathVariable long id, @RequestBody User updatedUser) {
         return service.update(id, updatedUser);
     }
 

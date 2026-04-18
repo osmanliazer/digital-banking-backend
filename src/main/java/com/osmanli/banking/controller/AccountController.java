@@ -1,5 +1,6 @@
 package com.osmanli.banking.controller;
 
+import com.osmanli.banking.dto.AccountResponse;
 import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.Transaction;
@@ -18,7 +19,7 @@ public class AccountController {
     }
 
     @PostMapping("/user/{userId}")
-    public Account createAccount(@RequestBody Account account, @PathVariable Long userId) {
+    public AccountResponse createAccount(@RequestBody Account account, @PathVariable Long userId) {
         return service.createAccount(account, userId);
     }
 
@@ -29,22 +30,22 @@ public class AccountController {
     }
 
     @GetMapping("/{Id}")
-    public Account getAccount(@PathVariable Long Id) {
+    public AccountResponse getAccount(@PathVariable Long Id) {
         return service.getById(Id);
     }
 
     @GetMapping
-    public List<Account> getAllAccounts() {
+    public List<AccountResponse> getAllAccounts() {
         return service.getAll();
     }
 
     @PutMapping("/{id}/deposit")
-    public Account deposit(@PathVariable Long id, @RequestBody double amount) {
+    public AccountResponse deposit(@PathVariable Long id, @RequestBody double amount) {
         return service.deposit(id,amount);
     }
 
     @PutMapping("{id}/withdraw")
-    public Account withdraw(@PathVariable Long id, @RequestBody double amount ){
+    public AccountResponse withdraw(@PathVariable Long id, @RequestBody double amount ){
         return service.withdraw(id, amount);
     }
 

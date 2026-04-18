@@ -1,5 +1,5 @@
 package com.osmanli.banking.services;
-
+import com.osmanli.banking.dto.TransactionResponse;
 import com.osmanli.banking.dto.TransferRequest;
 import com.osmanli.banking.entity.Account;
 import com.osmanli.banking.entity.Transaction;
@@ -9,7 +9,7 @@ import com.osmanli.banking.exception.InsufficientBalance;
 import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.AccountRepository;
 import com.osmanli.banking.repository.UserRepository;
-
+import com.osmanli.banking.dto.AccountResponse;
 import com.osmanli.banking.repository.TransactionRepository;
 import java.time.LocalDateTime;
 import jakarta.transaction.Transactional;
@@ -29,7 +29,7 @@ public class AccountService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Account createAccount(Account account, Long userId) {
+    public AccountResponse createAccount(Account account, Long userId) {
        /* if (account.getAccountNumber() == null || account.getAccountNumber().isBlank()) {
             throw new RuntimeException("Account number must not be empty");
         }*/
@@ -49,8 +49,8 @@ public class AccountService {
 
         account.setAccountNumber(generateAccountNumber());
         account.setUser(user);
-
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+        return mapToAccountResponse(savedAccount);
     }
 
     private String generateAccountNumber() {
@@ -64,16 +64,21 @@ public class AccountService {
         return number;
     }
 
-    public Account getById(Long id) {
-        return accountRepository.findById(id)
+    public AccountResponse getById(Long id) {
+        Account account= accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFound("Account not found"));
+        return mapToAccountResponse(account);
     }
 
-    public List<Account> getAll() {
-        return accountRepository.findAll();
+    public List<AccountResponse> getAll() {
+        return accountRepository.findAll()
+                .stream()
+                .map(this::mapToAccountResponse)
+                .toList();
+
     }
 
-    public Account deposit(Long id, double amount) {
+    public AccountResponse deposit(Long id, double amount) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFound("Account not found"));
 
@@ -92,12 +97,12 @@ public class AccountService {
                 .build();
 
         transactionRepository.save(transaction);
-        return savedAccount;
+        return mapToAccountResponse(savedAccount);
 
 
     }
 
-    public Account withdraw(Long id, double amount) {
+    public AccountResponse withdraw(Long id, double amount) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFound("Account not found"));
 
@@ -119,7 +124,7 @@ public class AccountService {
                 .fromAccount(savedAccount)
                 .build();
         transactionRepository.save(transaction);
-        return savedAccount;
+        return mapToAccountResponse(savedAccount);
     }
 
     public void delete(Long id) {
@@ -170,6 +175,16 @@ public class AccountService {
                 .orElseThrow(()->new AccountNotFound("Account not found"));
 
         return transactionRepository.findByFromAccountOrToAccount(account, account);
+    }
+
+    private AccountResponse mapToAccountResponse(Account account){
+        return AccountResponse.builder()
+                .id(account.getId())
+                .accountNumber(account.getAccountNumber())
+                .balance(account.getBalance())
+                .userId(account.getUser().getId())
+                .userName(account.getUser().getName())
+                .build();
     }
 
 }
