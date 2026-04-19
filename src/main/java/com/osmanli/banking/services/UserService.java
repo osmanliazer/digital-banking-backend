@@ -5,6 +5,9 @@ import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.UserRepository;
 import com.osmanli.banking.entity.User;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +17,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
 
@@ -38,6 +44,7 @@ public class UserService {
         if (user.getPassword() == null || user.getPassword().length() < 6) {
             throw new RuntimeException("Password must be at least 6 characters");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser= repository.save(user);
         return mapToUserResponse(savedUser);
     }
@@ -65,7 +72,8 @@ public class UserService {
         if (updatedUser.getName() != null) {
             existing.setName(updatedUser.getName());
         }
-        if (updatedUser.getPassword() != null) {
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                existing.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             existing.setPassword(updatedUser.getPassword());
         }
 
