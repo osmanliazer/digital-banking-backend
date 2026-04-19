@@ -32,10 +32,7 @@ Swagger UI:
 
 
 ## Future Improvements
-- JWT Authentication
 - Role-based authorization
 - Docker support
-<<<<<<< HEAD
-=======
 
->>>>>>> 9a68063a1289e0d39f4fd324a7639aa2b8cd7d00
+

@@ -31,7 +31,7 @@ public class User {
 
     @Column(nullable = false, length = 255)
     @NotBlank(message = "Password must not be empty")
-    @Size(min=6, message= "passwor must be at least 6 character")
+    @Size(min=6, message= "password must be at least 6 character")
     private String password;
 
 }

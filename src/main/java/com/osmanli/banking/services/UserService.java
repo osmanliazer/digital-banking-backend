@@ -1,15 +1,10 @@
 package com.osmanli.banking.services;
-
 import com.osmanli.banking.dto.UserResponse;
 import com.osmanli.banking.exception.UserNotFound;
 import com.osmanli.banking.repository.UserRepository;
 import com.osmanli.banking.entity.User;
-
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
